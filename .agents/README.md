@@ -11,6 +11,7 @@ schema in `types/`.
 | Agent | File | Role | Model |
 | --- | --- | --- | --- |
 | **buffy-coding** | `buffy-coding.ts` | Main coding agent — explores, edits, verifies, researches,and orchestrates the rest | `deepseek/deepseek-v4-flash` |
+| **video-maker** | `video-maker.ts` | Produces a complete video package (script, storyboard, subtitles, shot list, ffmpeg render script/rendered slideshow) | `z-ai/glm-5.3-flash` |
 | **file-picker** | `file-picker.ts` | Finds relevant files in the codebase | `google/gemini-2.5-flash-lite` |
 | **file-lister** | `file-lister.ts` | Lists file paths (spawned by file-picker) | `google/gemini-3.5-flash-lite` |
 | **researcher-web** | `researcher-web.ts` | Browses the web and cites sources | `google/gemini-3.5-flash-lite` |
@@ -19,7 +20,8 @@ schema in `types/`.
 
 The main agent spawns the specialists via the `spawn_agents` tool; they are the
 same agent taxonomy the Freebuff product uses internally (file-picker,
-researcher-web, code-reviewer, thinker), just packaged for local use.
+researcher-web, code-reviewer, thinker), plus the extra `video-maker`
+specialist — all packaged for local use.
 
 ## Running the agents
 
@@ -72,7 +74,7 @@ const result = await client.run({
 
 ## Origin
 
-Ported from the Freebuff repository (Apache-2.0) on 2026-09-03:
+Ports + additions from the Freebuff repository (Apache-2.0) on 2026-09-03:
 
 - `agents/base3-free-deepseek-flash.ts` → `buffy-coding.ts`
 - `agents/file-explorer/file-picker.ts` (default) → `file-picker.ts`
@@ -80,6 +82,7 @@ Ported from the Freebuff repository (Apache-2.0) on 2026-09-03:
 - `agents/researcher/researcher-web.ts` → `researcher-web.ts`
 - `agents/reviewer/code-reviewer-deepseek-flash.ts` → `code-reviewer.ts`
 - `agents/thinker/thinker.ts` → `thinker.ts`
+- new: `video-maker.ts` — custom specialist built on Freebuff conventions (script, storyboard, subtitles, shot list, ffmpeg slideshow rendering
 
 Type definitions copied from `common/src/templates/initial-agents-dir/types/`.
 See `LICENSE` (Apache-2.0) for upstream license terms.

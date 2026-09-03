@@ -7,9 +7,13 @@ coding agent built on the Codebuff agent framework.
 * **Main agent:** `.agents/buffy-coding.ts` — a single-loop coding agent that
   explores, edits, verifies, researches,and orchestrates specialist subagents
   (file-picker, researcher-web, code-reviewer, thinker).
+* **Video maker:** `.agents/video-maker.ts` — a custom specialist that produces a
+  complete video package (script, storyboard, subtitles, shot list,
+  ffmpeg render script / rendered slideshow) for a topic.
 * **Subagents:** `.agents/file-picker.ts`, `.agents/file-lister.ts`,
   `.agents/researcher-web.ts`, `.agents/code-reviewer.ts`, `.agents/thinker.ts`.
 * **Types:** `.agents/types/` — official Codebuff/Freebuff agent type definitions.
+* **Model:** setiap agent memakai model gratis dari katalog Freebuff — ganti field `model` di tiap file untuk memakai model lain (OpenRouter juga didukung).
 
 
 

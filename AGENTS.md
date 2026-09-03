@@ -10,6 +10,8 @@ Custom Freebuff/Codebuff AI agents ported from https://github.com/CodebuffAI/fre
 - `.agents/researcher-web.ts` — web research (port of `agents/researcher/researcher-web.ts`).
 - `.agents/code-reviewer.ts` — code review (port of `agents/reviewer/code-reviewer-deepseek-flash.ts`).
 - `.agents/thinker.ts` — deep reasoning (port of `agents/thinker/thinker.ts`).
+- `.agents/video-maker.ts` — custom specialist (produces script, storyboard,
+  subtitles, shot list, ffmpeg render under `video/`).
 - `.agents/README.md` — usage + origin mapping.
 
 ## Conventions
