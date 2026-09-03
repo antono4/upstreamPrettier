@@ -1,5 +1,13 @@
 {
-  "devDependencies": {
-    "@types/node": "^22.20.1"
-  }
+  "name": "marbel-ai",
+  "version": "1.0.0",
+  "description": "Marbel AI chat UI - backend proxy ke endpoint OpenAI-compatible + static UI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
 }

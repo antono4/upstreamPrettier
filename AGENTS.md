@@ -1,27 +1,50 @@
-# Freebuff Custom Agents (this project)
+# Marbel AI — Catatan Repo
 
-Custom Freebuff/Codebuff AI agents ported from https://github.com/CodebuffAI/freebuff (Apache-2.0 license).
+## Cara menjalankan
 
-## Repository layout
+```bash
+PORT=12000 UPSTREAM=https://opencode.ai/zen node server.js
+```
 
-- `.agents/types/` — official Codebuff agent type definitions (`agent-definition.ts`, `tools.ts`, `util-types.ts`); do not edit (upstream copies).
-- `.agents/buffy-coding.ts` — main coding agent (ports `agents/base3-free-deepseek-flash.ts`; spawns the specialists below).
-- `.agents/file-picker.ts` / `.agents/file-lister.ts` — codebase file finding (ports of `agents/file-explorer/*`).
-- `.agents/researcher-web.ts` — web research (port of `agents/researcher/researcher-web.ts`).
-- `.agents/code-reviewer.ts` — code review (port of `agents/reviewer/code-reviewer-deepseek-flash.ts`).
-- `.agents/thinker.ts` — deep reasoning (port of `agents/thinker/thinker.ts`).
-- `.agents/video-maker.ts` — custom specialist (produces script, storyboard,
-  subtitles, shot list, ffmpeg render under `video/`).
-- `.agents/README.md` — usage + origin mapping.
+Server berfungsi ganda: serve file statis (`index.html`, `app.js`, `styles.css`) + proxy `/api/chat` dan `/api/models` ke upstream OpenAI-compatible. Tanpa dependency npm.
 
-## Conventions
+## Model gratis upstream Zen (valid per 2026-08)
 
-- Agents are free-tier models by default (change `model` in each file to swap).
-- All agent files import types via relative `./types/agent-definition` — must stay that
-  way for the Freebuff/Codebuff SDK (`loadLocalAgents`) to load them.
+- `ling-3.0-flash-fin-free` — cepat & stabil (~1s). Prioritas utama.
+- `nemotron-3-ultra-free` — cepat & stabil (~1-2s).
+- `mimo-v2.5-free` — populer, kadang rate-limit (>429).
+- `laguna-s-2.1-free` — kadang sukses, tapi lambat/unavailable (4-9s.
+- `deepseek-v4-flash-free`, `muse-spark-1.2-contributor-free` — sering kena rate-limit (>429,, tapi tetap dipakai sebagai cadangan.
+- `nemotron-3.5-lightning-free` — sangat lambat (>9s,, kadang gagal.
+- `big-pickle` — model anonim dari opencode 5 (tidak butuh API key,, kadang 429 — cadangan tambahan.
 
-## Verification
 
-- Run `freebuff` (or `codebuff`) in this directory — `.agents/` auto-loads.
-- To typecheck the agents locally without the harness: `bun x tsc --noEmit` with the
-  workspace's tsconfig; agents require Bun 1.3.14+ (see `.bun-version` convention upstream)。
+- `hy3-free` — **sudah tidak didukung** upstream (ModelError — jangan dipakai).
+
+## Pola chat (ensemble + fallback)
+
+Logika terpusat di `chatAnswer(messages, selected)`:
+
+- Moda "semua" (Auto Model): jalankan **semua model gratis paralel** (`firstFulfilled`), jawaban lengkap yang paling cepat berhasil yang dipakai. Tag model (`· <nama>`) dipasang di bawah label Marbel AI.
+- Moda single model: coba model pilihan dulu, **failover berurutan** ke `FREE_MODELS`.
+- Failover aktif untuk error HTTP 4xx/5xx dan error `upstream`. Error non-HTTP (mis. `NetworkError`) langsung gagal tanpa coba cadangan.
+- Respons kosong (`{"choices":[]}` / `error`) dianggap gagal agar failover tetap berjalan.
+- Ada tombol **Salin** (copy) dan **Ulangi** (regenerate) di tiap pesan assistant.
+
+## Backend (server.js)
+
+- Multi-upstream: `UPSTREAM` bisa berupa daftar dipisah koma; server mencoba berurutan (yang hidup dipakai).
+- `MODELS_TTL` mengontrol cache `/api/models` (default 300s).
+- Header keamanan dasar dipasang di semua respons (nosniff, frame, referrer, COOP, permissions-policy).
+- Timeout: 30s chat, 15s models.
+
+
+## Catatan penting
+
+- File sumber memakai gaya penulisan tidak biasa (koma-titik tanpa spasi konsisten). `node -c` valid meskipun tampak aneh; jangan "merapikan" tanpa tes.
+- `server.js` kini punya timeout upstream (30s chat, 15s models) dan tidak kirim header `Authorization` kosong.
+
+- Endpoint statis:
+  - `GET /` → index.html
+  - `GET /api/models` → daftar model upstream
+  - `POST /api/chat` → proxy ke `/v1/chat/completions`
