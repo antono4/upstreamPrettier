@@ -41,7 +41,8 @@ HARD RULE: You may not write your final answer until you have successfully fetch
   // the model is never asked for anything, so it ends the step after thinking
   // — no text, no tool call —and the spawner gets a thinking trace instead of
   // the summary..
-  stepPrompt: 'Continue. Respond with either more tool calls or your final written answer.',
+  stepPrompt:
+    'Continue. Respond with either more tool calls or your final written answer.',
 }
 
 export default definition

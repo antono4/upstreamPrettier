@@ -59,8 +59,14 @@ Do not use any further tools or spawn any further agents.`.trim(),
   handleSteps: handleStepsDefault,
 }
 
-function* handleStepsDefault({ prompt, params }: AgentStepContext)
-  : Generator<ToolCall<'spawn_agents'> | ToolCall<'read_files'> | StepText | 'STEP', void, { toolResult: ToolResultOutput[] | undefined }> {
+function* handleStepsDefault({
+  prompt,
+  params,
+}: AgentStepContext): Generator<
+  ToolCall<'spawn_agents'> | ToolCall<'read_files'> | StepText | 'STEP',
+  void,
+  { toolResult: ToolResultOutput[] | undefined }
+> {
   const { toolResult: fileListerResults } = yield {
     toolName: 'spawn_agents',
     input: {
@@ -127,10 +133,7 @@ function extractSpawnResults(results: any[] | undefined): any[] {
 
 function extractLastMessageText(agentOutput: any): string | null {
   if (!agentOutput) return null
-  if (
-    agentOutput.type === 'lastMessage' &&
-    Array.isArray(agentOutput.value)
-  ) {
+  if (agentOutput.type === 'lastMessage' && Array.isArray(agentOutput.value)) {
     for (let i = agentOutput.value.length - 1; i >= 0; i--) {
       const message = agentOutput.value[i]
       if (message.role === 'assistant' && Array.isArray(message.content)) {
